@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SafetyManual AI Mock</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="ambient-bg" aria-hidden="true"></div>
+
+    <div id="toastContainer" class="toast-container" aria-live="polite">
+      <div id="errorToast" class="toast toast-error"></div>
+      <div id="infoToast" class="toast toast-info"></div>
+    </div>
+
+    <main id="publicApp" class="public-shell">
+      <section id="screen-lp" class="public-screen is-active" data-screen="lp">
+        <div class="hero-card reveal" style="--delay: 0ms">
+          <p class="eyebrow">危険工程向けAIナレッジアシスタント</p>
+          <h1>SafetyManual AI</h1>
+          <p class="hero-copy">
+            根拠のある回答だけを提示し、現場の判断ミスを減らす。
+            不確実な問いには回答せず、責任者確認を促します。
+          </p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" data-public-nav="signup">新規登録</button>
+            <button class="btn btn-ghost" data-public-nav="login">ログイン</button>
+          </div>
+          <div class="hero-metrics">
+            <div class="metric-card">
+              <p class="metric-value">引用付き回答</p>
+              <p class="metric-label">根拠を常時表示</p>
+            </div>
+            <div class="metric-card">
+              <p class="metric-value">回答拒否設計</p>
+              <p class="metric-label">根拠不足時は中断</p>
+            </div>
+            <div class="metric-card">
+              <p class="metric-value">履歴再利用</p>
+              <p class="metric-label">同じ質問を再実行</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="screen-signup" class="public-screen" data-screen="signup">
+        <div class="auth-card reveal" style="--delay: 30ms">
+          <h2>新規登録</h2>
+          <form id="signupForm" class="auth-form" novalidate>
+            <label for="signupEmail">メールアドレス</label>
+            <input id="signupEmail" type="email" placeholder="name@example.com" autocomplete="email" required />
+            <p id="signupEmailError" class="field-error"></p>
+
+            <label for="signupPassword">パスワード（8文字以上）</label>
+            <input id="signupPassword" type="password" autocomplete="new-password" required />
+            <p id="signupPasswordError" class="field-error"></p>
+
+            <label for="signupPasswordConfirm">パスワード確認</label>
+            <input id="signupPasswordConfirm" type="password" autocomplete="new-password" required />
+            <p id="signupConfirmError" class="field-error"></p>
+
+            <button type="submit" class="btn btn-primary btn-block">登録してはじめる</button>
+          </form>
+          <p class="auth-subtext">
+            すでにアカウントをお持ちですか？
+            <button class="link-btn" data-public-nav="login">ログイン</button>
+          </p>
+        </div>
+      </section>
+
+      <section id="screen-login" class="public-screen" data-screen="login">
+        <div class="auth-card reveal" style="--delay: 30ms">
+          <h2>ログイン</h2>
+          <form id="loginForm" class="auth-form" novalidate>
+            <label for="loginEmail">メールアドレス</label>
+            <input id="loginEmail" type="email" autocomplete="email" required />
+
+            <label for="loginPassword">パスワード</label>
+            <input id="loginPassword" type="password" autocomplete="current-password" required />
+
+            <p id="loginError" class="field-error"></p>
+            <button type="submit" class="btn btn-primary btn-block">ログイン</button>
+          </form>
+          <div class="login-links">
+            <button class="link-btn" id="forgotPasswordBtn">パスワードを忘れた方</button>
+            <button class="link-btn" data-public-nav="signup">新規登録はこちら</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="privateApp" class="private-shell is-hidden">
+      <header class="app-header">
+        <div class="brand">
+          <span class="brand-badge" aria-hidden="true"></span>
+          <span>SafetyManual AI</span>
+        </div>
+        <nav class="center-nav" aria-label="メインメニュー">
+          <button class="nav-btn is-active" data-route="question">質問する</button>
+          <button class="nav-btn" data-route="history">履歴</button>
+        </nav>
+        <div class="user-menu-wrap">
+          <button id="userMenuToggle" class="user-chip" aria-expanded="false" aria-controls="userMenuPanel">
+            <span id="userInitial" class="user-initial">U</span>
+            <span id="userEmailLabel">user@example.com</span>
+          </button>
+          <div id="userMenuPanel" class="user-menu" hidden>
+            <button id="accountBtn" class="menu-item">アカウント</button>
+            <button id="logoutBtn" class="menu-item">ログアウト</button>
+          </div>
+        </div>
+      </header>
+
+      <main class="private-main">
+        <section id="screen-question" class="private-screen is-active" data-route-screen="question">
+          <div class="notice-banner reveal" style="--delay: 0ms">
+            この回答は提供ナレッジに基づく参考情報です。不確実な場合は責任者に確認してください。
+          </div>
+
+          <div class="question-grid">
+            <article class="panel question-panel reveal" style="--delay: 50ms">
+              <div class="panel-head">
+                <h2>質問</h2>
+                <span class="chip-safe">安全優先モード</span>
+              </div>
+
+              <form id="questionForm" class="question-form" novalidate>
+                <label for="questionInput">質問</label>
+                <textarea
+                  id="questionInput"
+                  rows="4"
+                  placeholder="例：ブレーキの効きが弱いとき、作業でやってはいけないことは？\n例：締結トルクが不明な場合の対応は？"
+                ></textarea>
+
+                <div class="example-chips">
+                  <button type="button" class="sample-chip">ブレーキの効きが弱い。作業でやってはいけないことは？</button>
+                  <button type="button" class="sample-chip">締結トルクが不明なとき、どう判断する？</button>
+                  <button type="button" class="sample-chip">変速不良のとき、禁止すべき確認不足は？</button>
+                </div>
+
+                <div class="form-options">
+                  <label class="toggle-wrap" for="citationToggle">
+                    <input id="citationToggle" type="checkbox" checked />
+                    <span class="toggle-ui" aria-hidden="true"></span>
+                    回答に根拠（引用）を表示
+                  </label>
+
+                  <label for="mockState" class="mock-select-label">
+                    表示ステート（モック）
+                    <select id="mockState">
+                      <option value="auto">自動</option>
+                      <option value="success">成功</option>
+                      <option value="no_evidence">根拠不足</option>
+                      <option value="error">失敗</option>
+                    </select>
+                  </label>
+                </div>
+
+                <p id="questionError" class="field-error"></p>
+
+                <div class="question-actions">
+                  <button id="askBtn" type="submit" class="btn btn-primary">質問する</button>
+                  <button id="clearBtn" type="button" class="btn btn-ghost">入力をクリア</button>
+                </div>
+              </form>
+            </article>
+
+            <article class="panel response-panel reveal" style="--delay: 100ms">
+              <div id="stateInitial" class="response-state is-active">
+                <h3>回答</h3>
+                <p>質問を入力して「質問する」を押すと、回答カードがここに表示されます。</p>
+              </div>
+
+              <div id="stateLoading" class="response-state">
+                <h3>回答</h3>
+                <p class="loading-text">
+                  回答を生成中…
+                  <span class="loading-dots" aria-hidden="true"><span></span><span></span><span></span></span>
+                </p>
+                <div class="loading-skeleton"></div>
+                <div class="loading-skeleton short"></div>
+              </div>
+
+              <article id="stateSuccess" class="response-state answer-card" aria-live="polite">
+                <header class="answer-head">
+                  <h3>回答</h3>
+                  <span class="status-badge status-success">成功</span>
+                </header>
+
+                <section class="answer-body">
+                  <p class="answer-conclusion"><strong>結論：</strong><span id="answerConclusion"></span></p>
+
+                  <div class="steps-block">
+                    <h4>手順</h4>
+                    <ol id="answerSteps"></ol>
+                  </div>
+
+                  <aside class="danger-block">
+                    <h4>⚠ やってはいけないこと</h4>
+                    <ul id="dangerList"></ul>
+                  </aside>
+
+                  <section id="citationBlock" class="citation-block">
+                    <h4>参照（ナレッジ）</h4>
+                    <div id="citationCards" class="citation-cards"></div>
+                  </section>
+                </section>
+
+                <footer class="answer-footer">
+                  <small>不明点が残る場合：責任者へ確認</small>
+                  <button id="saveAnswerBtn" class="btn btn-secondary" type="button">この回答を履歴に保存</button>
+                </footer>
+              </article>
+
+              <article id="stateNoEvidence" class="response-state answer-card no-evidence-card" aria-live="polite">
+                <header class="answer-head">
+                  <h3>回答</h3>
+                  <span class="status-badge status-warning">根拠不足</span>
+                </header>
+
+                <p class="no-evidence-text">
+                  提供ナレッジ内に十分な根拠が見つかりませんでした。責任者に確認してください。
+                </p>
+
+                <section class="candidate-block">
+                  <h4>関連しそうな見出し候補</h4>
+                  <ul id="candidateList"></ul>
+                </section>
+
+                <footer class="answer-footer">
+                  <small>判断が必要な場合は責任者へエスカレーション</small>
+                  <button id="saveNoEvidenceBtn" class="btn btn-secondary" type="button">この回答を履歴に保存</button>
+                </footer>
+              </article>
+            </article>
+          </div>
+        </section>
+
+        <section id="screen-history" class="private-screen" data-route-screen="history">
+          <article class="panel history-panel reveal" style="--delay: 30ms">
+            <div class="panel-head history-head">
+              <h2>履歴</h2>
+              <input id="historySearch" type="search" placeholder="キーワードで検索" />
+            </div>
+
+            <div id="historyEmpty" class="history-empty" hidden>
+              <p>履歴がありません。質問ページで回答を保存すると表示されます。</p>
+            </div>
+            <div id="historyList" class="history-list"></div>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <div id="historyModal" class="modal" hidden>
+      <div class="modal-backdrop" data-close-modal="true"></div>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <button id="closeModalBtn" class="modal-close" type="button" aria-label="閉じる">×</button>
+        <h3 id="modalTitle">履歴詳細</h3>
+
+        <p class="modal-meta"><span>日時</span><span id="modalDate"></span></p>
+        <p class="modal-meta"><span>ステータス</span><span id="modalStatus"></span></p>
+
+        <section class="modal-section">
+          <h4>質問</h4>
+          <p id="modalQuestion"></p>
+        </section>
+
+        <section class="modal-section">
+          <h4>回答</h4>
+          <div id="modalAnswer"></div>
+        </section>
+
+        <section id="modalCitationSection" class="modal-section">
+          <h4>引用</h4>
+          <div id="modalCitations"></div>
+        </section>
+
+        <button id="retryBtn" type="button" class="btn btn-primary btn-block">もう一度この質問をする</button>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
